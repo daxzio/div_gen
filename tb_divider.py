@@ -13,6 +13,7 @@ def tb_divider():
     i_dataout   = Signal(modbv(0)[24:])
     
     count       = Signal(modbv(0)[8:])
+    index       = Signal(modbv(0)[8:])
 
         
     module = divider(clock, i_valid, i_divisor, i_valid, i_dividend, i_validout, i_dataout)
@@ -41,8 +42,21 @@ def tb_divider():
             i_valid.next    = 0
             i_divisor.next  = 0x0
             i_dividend.next = 0x0
+
+    @always(clock.posedge)
+    def testResult():
+        if 1 == i_validout:
+            if 0 == index:
+                expected = 0x010203
+            else:
+                expected = 0x010100
+            if not expected == i_dataout:
+                raise Exception(f"dataout 0x{i_dataout} != expected 0x{expected:06x}")
+            index.next = index+1
+        
+
    
-    return module, clkgen, stimulus
+    return module, clkgen, stimulus, testResult
 
 
 def simulate(timesteps):
