@@ -20,7 +20,7 @@ There is a basic testbench written for vhdl, which can be used in vivado/modelsi
 
     tb_divider.vhd
 
-Not currently self checking, but the 2 results that come out, with the valid asserted, should be:
+The two tests are self checking, but the 2 results that come out, with the valid asserted, should be:
 
     0x010203
     0x010100

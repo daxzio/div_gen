@@ -16,12 +16,14 @@ architecture tb of tb_div is
     signal i_dividend : unsigned(15 downto 0);
     signal i_quotient : unsigned(23 downto 0);
     signal i_qv       : std_logic;
+    
+    signal i_index       : integer := 0;
 
 begin
 
     clk       <= not clk       after 1 ns;
     
-    p_check_read : process
+    p_gen_inputs : process
     begin
         i_divisor <= x"00";
         i_dividend <= x"0000";
@@ -68,6 +70,19 @@ begin
         wait until rising_edge(clk);
         wait;
 
+    end process;
+    
+    p_check_read : process
+    begin
+        if '1' = i_qv then
+            if 0 = i_index and x"010203" /= i_quotient then
+                report "DOUT MISMATCH!!" severity error;
+            elsif 1 = i_index and x"010100" /= i_quotient then
+                report "DOUT MISMATCH!!" severity error;
+            end if;
+            i_index <=  i_index + 1;
+        end if;
+        wait until rising_edge(clk);
     end process;
 
     div_gen_chan : entity work.divider
